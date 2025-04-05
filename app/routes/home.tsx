@@ -6,6 +6,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const username = "Codeawy";
   return (
     <div>
       <Button>Click me</Button>
