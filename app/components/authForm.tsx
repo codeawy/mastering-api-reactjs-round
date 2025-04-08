@@ -1,11 +1,13 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterSchemaData } from "~/schema/register";
+import { toast } from "sonner";
 
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
+import api from "~/api/config/axios";
+import { authKeys } from "~/constants/auth";
 
 const AuthForm = () => {
   const {
@@ -19,6 +21,27 @@ const AuthForm = () => {
 
   const onSubmit = (data: RegisterSchemaData) => {
     console.log(data);
+    api
+      .post("/auth/local/register", {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      })
+      .then(res => {
+        // ** Store the jwt at localStorage
+        localStorage.setItem(authKeys.TOKEN_KEY, res.data.jwt);
+        toast.success("User registered successfully", {
+          className: "!bg-green-500 !text-white",
+        });
+        // TODO: Store the user token in the Cookies
+
+        console.log(res);
+      })
+      .catch(err =>
+        toast.error(err.response.data.error.message, {
+          className: "!bg-red-500 !text-white",
+        })
+      );
   };
 
   return (
